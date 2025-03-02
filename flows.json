@@ -24,6 +24,14 @@
         "env": []
     },
     {
+        "id": "bdb8a41c23412c9d",
+        "type": "tab",
+        "label": "SimplePush Flow",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "ecb3df7cff3a3aa6",
         "type": "mqtt-broker",
         "name": "L1 Status",
@@ -254,6 +262,26 @@
         "type": "ui_group",
         "name": "Swiss Machines",
         "tab": "cfe62d6340ab4cfd",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "3383b76a8c0de895",
+        "type": "ui_tab",
+        "name": "SimplePush",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "604118d9997b95a6",
+        "type": "ui_group",
+        "name": "L1 Monitor",
+        "tab": "3383b76a8c0de895",
         "order": 1,
         "disp": true,
         "width": 6,
@@ -585,11 +613,12 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 60,
+        "x": 220,
         "y": 200,
         "wires": [
             [
-                "7dfd70935fd105d2"
+                "f077fb4d2ac44f19",
+                "0342385c0db8288f"
             ]
         ]
     },
@@ -598,7 +627,7 @@
         "type": "debug",
         "z": "3ffa072fe48cab23",
         "name": "debug 2",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -652,29 +681,271 @@
         ]
     },
     {
-        "id": "7dfd70935fd105d2",
-        "type": "change",
+        "id": "0342385c0db8288f",
+        "type": "link out",
         "z": "3ffa072fe48cab23",
-        "name": "Set Machine",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload.machine",
-                "pt": "msg",
-                "to": "L1",
-                "tot": "str"
-            }
+        "name": "L1 Status",
+        "mode": "link",
+        "links": [
+            "96ee94f66ce20d18"
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 230,
-        "y": 200,
+        "x": 375,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "13e6a35cb574419d",
+        "type": "ui_text_input",
+        "z": "bdb8a41c23412c9d",
+        "name": "",
+        "label": "Add Key",
+        "tooltip": "",
+        "group": "604118d9997b95a6",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": "0",
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 240,
+        "y": 120,
         "wires": [
             [
-                "f077fb4d2ac44f19"
+                "7745c301cd814626"
+            ]
+        ]
+    },
+    {
+        "id": "dd60d1c953544af7",
+        "type": "function",
+        "z": "bdb8a41c23412c9d",
+        "name": "Recall Keys",
+        "func": "var simple_push_keys = flow.get('simple_push_keys') || [];\n\nmsg.payload = simple_push_keys.join(\";\")\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nvar simple_push_keys = flow.get('simple_push_keys') || [];\nvar msg = {};\nmsg.payload = simple_push_keys.join(\";\")\n\nreturn msg;",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 180,
+        "wires": [
+            [
+                "23fb605ced031925"
+            ]
+        ]
+    },
+    {
+        "id": "7745c301cd814626",
+        "type": "function",
+        "z": "bdb8a41c23412c9d",
+        "name": "Add Keys",
+        "func": "var simple_push_keys = flow.get('simple_push_keys') || [];\n\nvar current_keys = msg.payload.split(\";\");\n\nsimple_push_keys = [... new Set([...simple_push_keys,...current_keys])];\nsimple_push_keys = simple_push_keys.filter(function(e){return e}); \nflow.set(\"simple_push_keys\", simple_push_keys);\nmsg.payload = simple_push_keys;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 120,
+        "wires": [
+            [
+                "fb3e3de0e30c16f4"
+            ]
+        ]
+    },
+    {
+        "id": "23fb605ced031925",
+        "type": "ui_text",
+        "z": "bdb8a41c23412c9d",
+        "group": "604118d9997b95a6",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Current Keys:",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 760,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "fb3e3de0e30c16f4",
+        "type": "function",
+        "z": "bdb8a41c23412c9d",
+        "name": "format keys",
+        "func": "msg.payload = msg.payload.join(\";\");\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 220,
+        "wires": [
+            [
+                "23fb605ced031925"
+            ]
+        ]
+    },
+    {
+        "id": "c2fad315e6404cf7",
+        "type": "inject",
+        "z": "bdb8a41c23412c9d",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "dd60d1c953544af7"
+            ]
+        ]
+    },
+    {
+        "id": "a87a77235b83d5c3",
+        "type": "ui_text_input",
+        "z": "bdb8a41c23412c9d",
+        "name": "",
+        "label": "Remove Key",
+        "tooltip": "",
+        "group": "604118d9997b95a6",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": "0",
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 230,
+        "y": 240,
+        "wires": [
+            [
+                "3603babf09d731d0"
+            ]
+        ]
+    },
+    {
+        "id": "3603babf09d731d0",
+        "type": "function",
+        "z": "bdb8a41c23412c9d",
+        "name": "Remove Keys",
+        "func": "var simple_push_keys = flow.get('simple_push_keys') || [];\n\nvar remove_keys = msg.payload.split(\";\");\nsimple_push_keys = simple_push_keys.filter(item => !remove_keys.includes(item))\nsimple_push_keys = simple_push_keys.filter(function(e){return e}); \nflow.set(\"simple_push_keys\", simple_push_keys);\nmsg.payload = simple_push_keys;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 240,
+        "wires": [
+            [
+                "fb3e3de0e30c16f4"
+            ]
+        ]
+    },
+    {
+        "id": "96ee94f66ce20d18",
+        "type": "link in",
+        "z": "bdb8a41c23412c9d",
+        "name": "L1 Status",
+        "links": [
+            "0342385c0db8288f"
+        ],
+        "x": 265,
+        "y": 300,
+        "wires": [
+            [
+                "a66141eee3209c04"
+            ]
+        ]
+    },
+    {
+        "id": "54500c7b191eae0c",
+        "type": "debug",
+        "z": "bdb8a41c23412c9d",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "9e33c1a3b8582525",
+        "type": "simplepush",
+        "z": "bdb8a41c23412c9d",
+        "key": "",
+        "title": "",
+        "message": "",
+        "attachments": "",
+        "event": "",
+        "actions": "",
+        "actionTimeout": 180,
+        "password": "",
+        "salt": "",
+        "name": "",
+        "outputs": 1,
+        "x": 650,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a66141eee3209c04",
+        "type": "function",
+        "z": "bdb8a41c23412c9d",
+        "name": "Format notifications",
+        "func": "var simple_push_keys = flow.get('simple_push_keys') || [];\n\nvar output_msg = [];\n\nfor (const push_key of simple_push_keys) {\n    \n    var key_msg = {\n        key: push_key,\n        title: \"L1 Status\",\n        payload: `Status: ${msg.payload.status} at ${msg.payload.timestamp}`\n    };\n    output_msg.push(key_msg);\n}\n\nreturn [output_msg];",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 300,
+        "wires": [
+            [
+                "54500c7b191eae0c"
             ]
         ]
     }
