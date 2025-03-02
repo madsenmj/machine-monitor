@@ -1,8 +1,8 @@
 [
     {
-        "id": "de0cd9416613d6f7",
+        "id": "6541862673e2e324",
         "type": "tab",
-        "label": "Flow 1",
+        "label": "Machine Monitor Test Flow",
         "disabled": false,
         "info": "",
         "env": []
@@ -10,15 +10,15 @@
     {
         "id": "a53db9234ae61902",
         "type": "tab",
-        "label": "Flow 2",
+        "label": "MQTT Broker Flow",
         "disabled": false,
         "info": "",
         "env": []
     },
     {
-        "id": "6541862673e2e324",
+        "id": "3ffa072fe48cab23",
         "type": "tab",
-        "label": "Flow 3",
+        "label": "Shop Monitor Flow",
         "disabled": false,
         "info": "",
         "env": []
@@ -88,7 +88,7 @@
     {
         "id": "cfe62d6340ab4cfd",
         "type": "ui_tab",
-        "name": "Home",
+        "name": "Machine Simulator",
         "icon": "dashboard",
         "disabled": false,
         "hidden": false
@@ -192,7 +192,7 @@
     {
         "id": "401da0afafe0172c",
         "type": "ui_group",
-        "name": "Semaphore",
+        "name": "L1 Semaphore",
         "tab": "cfe62d6340ab4cfd",
         "order": 1,
         "disp": true,
@@ -201,11 +201,342 @@
         "className": ""
     },
     {
-        "id": "086ad272efc8b1ba",
-        "type": "mqtt out",
-        "z": "de0cd9416613d6f7",
-        "name": "",
+        "id": "3610e9ea918215b1",
+        "type": "mqtt-broker",
+        "name": "Shop",
+        "broker": "",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "805aacdc.3fe4d",
+        "type": "ui_group",
+        "name": "Text Panel",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "5"
+    },
+    {
+        "id": "2fb40440.387a4c",
+        "type": "ui_group",
+        "name": "Gauge",
+        "tab": "",
+        "order": 2,
+        "disp": true,
+        "width": "5"
+    },
+    {
+        "id": "c23aad146e3d1163",
+        "type": "ui_group",
+        "name": "Swiss Machines",
+        "tab": "cfe62d6340ab4cfd",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "82f935d4f4d6aebd",
+        "type": "inject",
+        "z": "6541862673e2e324",
+        "name": "Monitor Injection",
+        "props": [
+            {
+                "p": "payload.timestamp",
+                "v": "iso",
+                "vt": "date"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
         "topic": "Status",
+        "x": 90,
+        "y": 160,
+        "wires": [
+            [
+                "10110026bae0f49e"
+            ]
+        ]
+    },
+    {
+        "id": "10110026bae0f49e",
+        "type": "function",
+        "z": "6541862673e2e324",
+        "name": "Signal Status Calculator",
+        "func": "var prior_status = context.get('status') || \"Stopped\";\nvar status;\n\nvar red_state = flow.get('red_state') || false;\nvar yellow_state = flow.get('yellow_state') || false;\nvar green_state = flow.get('green_state') || false;\n\n//console.log(`r: ${red_state}, y: ${yellow_state}, g: ${green_state}`);\n\nif (green_state && !red_state && ! yellow_state) {\n    status = \"Running\";\n} else if (green_state && red_state) {\n    status = \"Op Stop\";\n} else if (yellow_state && red_state) {\n    status = \"Bar Loader\";\n} else if (!green_state && red_state && ! yellow_state) {\n    status = \"Error\";\n} else {\n    status = \"Stopped\";\n}\n\n//console.log(`prior_status: ${prior_status}, new_status: ${status}`);\n\nmsg.payload = {\n    \"timestamp\": msg.payload.timestamp,\n    \"status\": status,\n    \"changed\": (status != prior_status)\n};\ncontext.set(\"status\", status);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set('status', \"Stopped\");",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 160,
+        "wires": [
+            [
+                "bd9d31181ca2d446"
+            ]
+        ]
+    },
+    {
+        "id": "c093b522d2602de5",
+        "type": "debug",
+        "z": "6541862673e2e324",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "bd9d31181ca2d446",
+        "type": "switch",
+        "z": "6541862673e2e324",
+        "name": "",
+        "property": "payload.changed",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "7bca8b61ec8705bb"
+            ]
+        ]
+    },
+    {
+        "id": "ab656cdd4ca4b8d3",
+        "type": "ui_switch",
+        "z": "6541862673e2e324",
+        "name": "",
+        "label": "Red",
+        "tooltip": "",
+        "group": "401da0afafe0172c",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "switch",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 70,
+        "y": 260,
+        "wires": [
+            [
+                "b3f5aae98a6791e2"
+            ]
+        ]
+    },
+    {
+        "id": "b3f5aae98a6791e2",
+        "type": "function",
+        "z": "6541862673e2e324",
+        "name": "set_red_state",
+        "func": "var old_state = flow.get('red_state') || false;\n\nvar new_state = msg.payload;\nif (new_state != old_state) {\n    flow.set('red_state', new_state);\n}\n\nmsg.payload = {\n    \"timestamp\": msg.payload.timestamp,\n    \"old_state\": old_state,\n    \"new_state\": new_state\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set('red_state', false);",
+        "finalize": "",
+        "libs": [],
+        "x": 240,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b7b7de461a531e98",
+        "type": "function",
+        "z": "6541862673e2e324",
+        "name": "set_yellow_state",
+        "func": "var old_state = flow.get('yellow_state') || false;\n\nvar new_state = msg.payload;\nif (new_state != old_state) {\n    flow.set('yellow_state', new_state);\n}\n\nmsg.payload = {\n    \"timestamp\": msg.payload.timestamp,\n    \"old_state\": old_state,\n    \"new_state\": new_state\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set('yellow_state', false);",
+        "finalize": "",
+        "libs": [],
+        "x": 250,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4d296e422dd494e2",
+        "type": "ui_switch",
+        "z": "6541862673e2e324",
+        "name": "",
+        "label": "Yellow",
+        "tooltip": "",
+        "group": "401da0afafe0172c",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "switch",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 70,
+        "y": 300,
+        "wires": [
+            [
+                "b7b7de461a531e98"
+            ]
+        ]
+    },
+    {
+        "id": "1de89547e45f609b",
+        "type": "function",
+        "z": "6541862673e2e324",
+        "name": "set_green_state",
+        "func": "var old_state = flow.get('green_state') || false;\n\nvar new_state = msg.payload;\nif (new_state != old_state) {\n    flow.set('green_state', new_state);\n}\n\nmsg.payload = {\n    \"timestamp\": msg.payload.timestamp,\n    \"old_state\": old_state,\n    \"new_state\": new_state\n};\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set('green_state', false);",
+        "finalize": "",
+        "libs": [],
+        "x": 240,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "59e262eb4c7aeb24",
+        "type": "ui_switch",
+        "z": "6541862673e2e324",
+        "name": "",
+        "label": "Green",
+        "tooltip": "",
+        "group": "401da0afafe0172c",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "switch",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 70,
+        "y": 340,
+        "wires": [
+            [
+                "1de89547e45f609b"
+            ]
+        ]
+    },
+    {
+        "id": "7bca8b61ec8705bb",
+        "type": "change",
+        "z": "6541862673e2e324",
+        "name": "Remove changed flag",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload.changed",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 160,
+        "wires": [
+            [
+                "c093b522d2602de5",
+                "2f55709e52b9be20"
+            ]
+        ]
+    },
+    {
+        "id": "2f55709e52b9be20",
+        "type": "mqtt out",
+        "z": "6541862673e2e324",
+        "name": "",
+        "topic": "L1Status",
         "qos": "",
         "retain": "",
         "respTopic": "",
@@ -213,39 +544,10 @@
         "userProps": "",
         "correl": "",
         "expiry": "",
-        "broker": "af4df3a125511bed",
-        "x": 430,
-        "y": 140,
+        "broker": "3610e9ea918215b1",
+        "x": 920,
+        "y": 220,
         "wires": []
-    },
-    {
-        "id": "c18c9c99eb1175d6",
-        "type": "inject",
-        "z": "de0cd9416613d6f7",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 140,
-        "y": 140,
-        "wires": [
-            [
-                "086ad272efc8b1ba"
-            ]
-        ]
     },
     {
         "id": "be56d85433fdc4ad",
@@ -271,98 +573,96 @@
         ]
     },
     {
-        "id": "82f935d4f4d6aebd",
-        "type": "inject",
-        "z": "6541862673e2e324",
+        "id": "d91c8b50c1ed918e",
+        "type": "mqtt in",
+        "z": "3ffa072fe48cab23",
         "name": "",
-        "props": [
-            {
-                "p": "payload.timestamp",
-                "v": "iso",
-                "vt": "date"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "Status",
-        "x": 90,
-        "y": 160,
+        "topic": "L1Status",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "3610e9ea918215b1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 60,
+        "y": 200,
         "wires": [
             [
-                "192cdcdcb4ebd573"
+                "7dfd70935fd105d2"
             ]
         ]
     },
     {
-        "id": "10110026bae0f49e",
-        "type": "function",
-        "z": "6541862673e2e324",
-        "name": "function 1",
-        "func": "var prior_status = context.get('status');\nvar status;\n\nif (msg.payload.green && !msg.payload.red) {\n    status = \"Running\";\n} else if (msg.payload.green && msg.payload.red) {\n    status = \"Op Stop\";\n} else if (msg.payload.yellow && msg.payload.red) {\n    status = \"Bar Loader\";\n} else {\n    status = \"Stopped\";\n}\n\ncontext.set('status', status);\nmsg.payload = {\n    \"timestamp\": msg.payload.timestamp,\n    \"status\": status,\n    \"changed\": (status != prior_status)\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set('status', \"Stopped\");",
-        "finalize": "",
-        "libs": [],
-        "x": 440,
-        "y": 160,
-        "wires": [
-            [
-                "bd9d31181ca2d446",
-                "c093b522d2602de5"
-            ]
-        ]
-    },
-    {
-        "id": "c093b522d2602de5",
+        "id": "d9bf7a20221de86e",
         "type": "debug",
-        "z": "6541862673e2e324",
-        "name": "debug 1",
+        "z": "3ffa072fe48cab23",
+        "name": "debug 2",
         "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
+        "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 820,
+        "x": 580,
         "y": 160,
         "wires": []
     },
     {
-        "id": "192cdcdcb4ebd573",
+        "id": "f18b3aea.ee5e08",
+        "type": "ui_template",
+        "z": "3ffa072fe48cab23",
+        "group": "c23aad146e3d1163",
+        "name": "L1 Status",
+        "order": 0,
+        "width": "0",
+        "height": "0",
+        "format": "<style>\n    #tex1 {\n        font-weight:bolder;\n        fill: black;\n    }\n    \n    #tex2 {\n        font-weight:bolder;\n        font-size:20px;\n        fill: black;\n    }\n    \n    #tex3 {\n        font-weight:bolder;\n        font-size:10px;\n        fill: black;\n    }   \n</style>\n\n\n<svg x=\"0\" y=\"0\" height=\"80\" viewBox=\"0 0 200 80\" width=\"200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n<rect width=\"200\" height=\"80\" x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" style=\"fill:{{msg.payload.fill}};stroke-width:1;stroke:black\"/>\n<text id=\"tex1\" x=\"10\" y=\"20\" > L1 Status </text>\n<text id=\"tex2\" x=\"10\" y=\"45\" > {{msg.payload.status}} </text>\n<text id=\"tex3\" x=\"10\" y=\"60\" > {{msg.payload.timestamp | date:\"medium\"}} </text>\n\n</svg>\n\n",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 580,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f077fb4d2ac44f19",
+        "type": "function",
+        "z": "3ffa072fe48cab23",
+        "name": "Set Fill Color",
+        "func": "if (msg.payload.status == \"Stopped\"){\n    msg.payload.fill = \"#FFFFFF\";\n}\nelse if (msg.payload.status == \"Op Stop\") {\n    msg.payload.fill = \"#FFFF64\";\n}\nelse if (msg.payload.status == \"Running\") {\n    msg.payload.fill = \"#64FF64\";\n} \nelse if (msg.payload.status == \"Bar Loader\") {\n    msg.payload.fill = \"#6464FF\";\n}else if (msg.payload.status == \"Error\") {\n    msg.payload.fill = \"#FF6464\";\n}\nelse {\n    msg.payload.fill = \"#FFFFFF\";\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 200,
+        "wires": [
+            [
+                "f18b3aea.ee5e08",
+                "d9bf7a20221de86e"
+            ]
+        ]
+    },
+    {
+        "id": "7dfd70935fd105d2",
         "type": "change",
-        "z": "6541862673e2e324",
-        "name": "",
+        "z": "3ffa072fe48cab23",
+        "name": "Set Machine",
         "rules": [
             {
                 "t": "set",
-                "p": "payload.green",
+                "p": "payload.machine",
                 "pt": "msg",
-                "to": "true",
-                "tot": "bool"
-            },
-            {
-                "t": "set",
-                "p": "payload.yellow",
-                "pt": "msg",
-                "to": "false",
-                "tot": "bool"
-            },
-            {
-                "t": "set",
-                "p": "payload.red",
-                "pt": "msg",
-                "to": "false",
-                "tot": "bool"
+                "to": "L1",
+                "tot": "str"
             }
         ],
         "action": "",
@@ -370,54 +670,12 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 260,
-        "y": 160,
+        "x": 230,
+        "y": 200,
         "wires": [
             [
-                "10110026bae0f49e"
+                "f077fb4d2ac44f19"
             ]
         ]
-    },
-    {
-        "id": "bd9d31181ca2d446",
-        "type": "switch",
-        "z": "6541862673e2e324",
-        "name": "",
-        "property": "payload.changed",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "true"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 1,
-        "x": 590,
-        "y": 260,
-        "wires": [
-            [
-                "bd7fb73100208a91",
-                "c093b522d2602de5"
-            ]
-        ]
-    },
-    {
-        "id": "bd7fb73100208a91",
-        "type": "mqtt out",
-        "z": "6541862673e2e324",
-        "name": "",
-        "topic": "Status",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "af4df3a125511bed",
-        "x": 730,
-        "y": 260,
-        "wires": []
     }
 ]
