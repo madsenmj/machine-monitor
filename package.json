@@ -1,0 +1,12 @@
+{
+    "name": "machine-monitor",
+    "description": "Project to monitor the status of a machine based on the signal tower lights",
+    "version": "0.0.1",
+    "dependencies": {},
+    "node-red": {
+        "settings": {
+            "flowFile": "flows.json",
+            "credentialsFile": "flows_cred.json"
+        }
+    }
+}
