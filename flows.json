@@ -110,7 +110,8 @@
                 "default": "#0094CE",
                 "baseColor": "#0094CE",
                 "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": false
+                "edited": true,
+                "reset": false
             },
             "darkTheme": {
                 "default": "#097479",
@@ -322,7 +323,7 @@
         "type": "function",
         "z": "6541862673e2e324",
         "name": "Signal Status Calculator",
-        "func": "var prior_status = context.get('status') || \"Stopped\";\nvar status;\n\nvar red_state = flow.get('red_state') || false;\nvar yellow_state = flow.get('yellow_state') || false;\nvar green_state = flow.get('green_state') || false;\n\n//console.log(`r: ${red_state}, y: ${yellow_state}, g: ${green_state}`);\n\nif (green_state && !red_state && ! yellow_state) {\n    status = \"Running\";\n} else if (green_state && red_state) {\n    status = \"Op Stop\";\n} else if (yellow_state && red_state) {\n    status = \"Bar Loader\";\n} else if (!green_state && red_state && ! yellow_state) {\n    status = \"Error\";\n} else {\n    status = \"Stopped\";\n}\n\n//console.log(`prior_status: ${prior_status}, new_status: ${status}`);\n\nmsg.payload = {\n    \"timestamp\": msg.payload.timestamp,\n    \"status\": status,\n    \"changed\": (status != prior_status)\n};\ncontext.set(\"status\", status);\nreturn msg;",
+        "func": "var machine = \"L1\";\nvar prior_status = context.get('status') || \"Stopped\";\nvar status;\n\nvar red_state = flow.get('red_state') || false;\nvar yellow_state = flow.get('yellow_state') || false;\nvar green_state = flow.get('green_state') || false;\n\n//console.log(`r: ${red_state}, y: ${yellow_state}, g: ${green_state}`);\n\nif (green_state && !red_state && ! yellow_state) {\n    status = \"Running\";\n} else if (green_state && red_state) {\n    status = \"Op Stop\";\n} else if (yellow_state && red_state) {\n    status = \"Bar Loader\";\n} else if (!green_state && red_state && ! yellow_state) {\n    status = \"Error\";\n} else {\n    status = \"Stopped\";\n}\n\n//console.log(`prior_status: ${prior_status}, new_status: ${status}`);\n\nmsg.payload = {\n    \"timestamp\": msg.payload.timestamp,\n    \"status\": status,\n    \"changed\": (status != prior_status)\n};\nmsg.topic = `${machine}Status`;\ncontext.set(\"status\", status);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -564,7 +565,7 @@
         "type": "mqtt out",
         "z": "6541862673e2e324",
         "name": "",
-        "topic": "L1Status",
+        "topic": "",
         "qos": "",
         "retain": "",
         "respTopic": "",
@@ -573,7 +574,7 @@
         "correl": "",
         "expiry": "",
         "broker": "3610e9ea918215b1",
-        "x": 920,
+        "x": 910,
         "y": 220,
         "wires": []
     },
@@ -613,12 +614,13 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 220,
+        "x": 100,
         "y": 200,
         "wires": [
             [
-                "f077fb4d2ac44f19",
-                "0342385c0db8288f"
+                "0342385c0db8288f",
+                "84999b8402c2b958",
+                "b8eb8f9d9cbdbd57"
             ]
         ]
     },
@@ -634,7 +636,7 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 580,
+        "x": 820,
         "y": 160,
         "wires": []
     },
@@ -647,13 +649,13 @@
         "order": 0,
         "width": "0",
         "height": "0",
-        "format": "<style>\n    #tex1 {\n        font-weight:bolder;\n        fill: black;\n    }\n    \n    #tex2 {\n        font-weight:bolder;\n        font-size:20px;\n        fill: black;\n    }\n    \n    #tex3 {\n        font-weight:bolder;\n        font-size:10px;\n        fill: black;\n    }   \n</style>\n\n\n<svg x=\"0\" y=\"0\" height=\"80\" viewBox=\"0 0 200 80\" width=\"200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n<rect width=\"200\" height=\"80\" x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" style=\"fill:{{msg.payload.fill}};stroke-width:1;stroke:black\"/>\n<text id=\"tex1\" x=\"10\" y=\"20\" > L1 Status </text>\n<text id=\"tex2\" x=\"10\" y=\"45\" > {{msg.payload.status}} </text>\n<text id=\"tex3\" x=\"10\" y=\"60\" > {{msg.payload.timestamp | date:\"medium\"}} </text>\n\n</svg>\n\n",
+        "format": "<style>\n    #tex1 {\n        font-weight:bolder;\n        fill: black;\n    }\n    \n    #tex2 {\n        font-weight:bolder;\n        font-size:20px;\n        fill: black;\n    }\n    \n    #tex3 {\n        font-weight:bolder;\n        font-size:10px;\n        fill: black;\n    }   \n</style>\n\n\n<svg x=\"0\" y=\"0\" height=\"80\" viewBox=\"0 0 200 80\" width=\"200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n<rect width=\"200\" height=\"80\" x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" style=\"fill:{{msg.payload.fill}};stroke-width:1;stroke:black\"/>\n<text id=\"tex1\" x=\"10\" y=\"20\" > {{msg.payload.topic}} </text>\n<text id=\"tex2\" x=\"10\" y=\"45\" > {{msg.payload.status}} </text>\n<text id=\"tex3\" x=\"10\" y=\"60\" > {{msg.payload.timestamp | date:\"medium\"}} </text>\n\n</svg>\n\n",
         "storeOutMessages": false,
         "fwdInMessages": false,
         "resendOnRefresh": false,
         "templateScope": "local",
         "className": "",
-        "x": 580,
+        "x": 820,
         "y": 200,
         "wires": [
             []
@@ -671,7 +673,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 410,
+        "x": 650,
         "y": 200,
         "wires": [
             [
@@ -692,6 +694,74 @@
         "x": 375,
         "y": 260,
         "wires": []
+    },
+    {
+        "id": "84999b8402c2b958",
+        "type": "debug",
+        "z": "3ffa072fe48cab23",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "ac8ec76bced873bf",
+        "type": "inject",
+        "z": "3ffa072fe48cab23",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":\"Initialized\"}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 140,
+        "wires": [
+            [
+                "b8eb8f9d9cbdbd57"
+            ]
+        ]
+    },
+    {
+        "id": "b8eb8f9d9cbdbd57",
+        "type": "change",
+        "z": "3ffa072fe48cab23",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.topic",
+                "pt": "msg",
+                "to": "L1 Status",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 340,
+        "y": 200,
+        "wires": [
+            [
+                "f077fb4d2ac44f19"
+            ]
+        ]
     },
     {
         "id": "13e6a35cb574419d",
