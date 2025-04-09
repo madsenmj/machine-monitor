@@ -32,6 +32,14 @@
         "env": []
     },
     {
+        "id": "1ead5f0b5e14aad5",
+        "type": "tab",
+        "label": "Operator Input",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "ecb3df7cff3a3aa6",
         "type": "mqtt-broker",
         "name": "L1 Status",
@@ -205,7 +213,7 @@
         "tab": "cfe62d6340ab4cfd",
         "order": 1,
         "disp": true,
-        "width": 6,
+        "width": "3",
         "collapse": false,
         "className": ""
     },
@@ -265,7 +273,7 @@
         "tab": "cfe62d6340ab4cfd",
         "order": 1,
         "disp": true,
-        "width": 6,
+        "width": "12",
         "collapse": false,
         "className": ""
     },
@@ -286,6 +294,28 @@
         "order": 1,
         "disp": true,
         "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "bd17ac3cedb03c4d",
+        "type": "ui_group",
+        "name": "css Example",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "fb28dcf88cc50447",
+        "type": "ui_group",
+        "name": "Office",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "12",
         "collapse": false,
         "className": ""
     },
@@ -646,7 +676,7 @@
         "z": "3ffa072fe48cab23",
         "group": "c23aad146e3d1163",
         "name": "L1 Status",
-        "order": 0,
+        "order": 1,
         "width": "0",
         "height": "0",
         "format": "<style>\n    #tex1 {\n        font-weight:bolder;\n        fill: black;\n    }\n    \n    #tex2 {\n        font-weight:bolder;\n        font-size:20px;\n        fill: black;\n    }\n    \n    #tex3 {\n        font-weight:bolder;\n        font-size:10px;\n        fill: black;\n    }   \n</style>\n\n\n<svg x=\"0\" y=\"0\" height=\"80\" viewBox=\"0 0 200 80\" width=\"200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n<rect width=\"200\" height=\"80\" x=\"0\" y=\"0\" rx=\"20\" ry=\"20\" style=\"fill:{{msg.payload.fill}};stroke-width:1;stroke:black\"/>\n<text id=\"tex1\" x=\"10\" y=\"20\" > {{msg.payload.topic}} </text>\n<text id=\"tex2\" x=\"10\" y=\"45\" > {{msg.payload.status}} </text>\n<text id=\"tex3\" x=\"10\" y=\"60\" > {{msg.payload.timestamp | date:\"medium\"}} </text>\n\n</svg>\n\n",
@@ -1017,6 +1047,255 @@
             [
                 "54500c7b191eae0c"
             ]
+        ]
+    },
+    {
+        "id": "dd8b29da5a82fee6",
+        "type": "ui_dropdown",
+        "z": "1ead5f0b5e14aad5",
+        "name": "",
+        "label": "",
+        "tooltip": "",
+        "place": "Status",
+        "group": "c23aad146e3d1163",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Checked Out",
+                "value": "Out",
+                "type": "str"
+            },
+            {
+                "label": "Checked In",
+                "value": "In",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 240,
+        "y": 120,
+        "wires": [
+            [
+                "bee0272810b72820",
+                "d2d34c2b524c3171",
+                "9ccdbbeb925913db"
+            ]
+        ]
+    },
+    {
+        "id": "06434e5a854411cb",
+        "type": "ui_popup-dropdown",
+        "z": "1ead5f0b5e14aad5",
+        "order": 3,
+        "name": "Dropdown",
+        "group": "c23aad146e3d1163",
+        "width": 1,
+        "height": 1,
+        "class": "popup-dialog",
+        "position": "center",
+        "posX": "position.x",
+        "posXType": "msg",
+        "posY": "position.y",
+        "posYType": "msg",
+        "options": [
+            {
+                "label": "No Operator",
+                "icon": "",
+                "topic": "Operator",
+                "topicType": "str",
+                "payload": "-1",
+                "payloadType": "num"
+            },
+            {
+                "label": "151-Martin",
+                "icon": "",
+                "topic": "Operator",
+                "topicType": "str",
+                "payload": "151",
+                "payloadType": "num"
+            },
+            {
+                "label": "9-Kevin",
+                "icon": "",
+                "topic": "Operator",
+                "topicType": "str",
+                "payload": "9",
+                "payloadType": "num"
+            }
+        ],
+        "sendValueTo": "payload",
+        "sendValueToType": "msg",
+        "x": 610,
+        "y": 160,
+        "wires": [
+            [
+                "d2d34c2b524c3171",
+                "b3458df3d78ba1b0"
+            ]
+        ]
+    },
+    {
+        "id": "bee0272810b72820",
+        "type": "switch",
+        "z": "1ead5f0b5e14aad5",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "In",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 410,
+        "y": 160,
+        "wires": [
+            [
+                "06434e5a854411cb"
+            ]
+        ]
+    },
+    {
+        "id": "224217a2a7316036",
+        "type": "ui_text",
+        "z": "1ead5f0b5e14aad5",
+        "group": "c23aad146e3d1163",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Operator Number",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "d2d34c2b524c3171",
+        "type": "debug",
+        "z": "1ead5f0b5e14aad5",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 980,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "9ccdbbeb925913db",
+        "type": "switch",
+        "z": "1ead5f0b5e14aad5",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Out",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 410,
+        "y": 220,
+        "wires": [
+            [
+                "f536f055b023707f"
+            ]
+        ]
+    },
+    {
+        "id": "f536f055b023707f",
+        "type": "change",
+        "z": "1ead5f0b5e14aad5",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 560,
+        "y": 220,
+        "wires": [
+            [
+                "b3458df3d78ba1b0"
+            ]
+        ]
+    },
+    {
+        "id": "b3458df3d78ba1b0",
+        "type": "function",
+        "z": "1ead5f0b5e14aad5",
+        "name": "Set Operator",
+        "func": "let operatorNumber = msg.payload;\n\nflow.set(\"operatorNumber\",operatorNumber);\nconst operators = new Map();\noperators.set(0, \"No Operator\");\noperators.set(151, \"Martin\");\noperators.set(9, \"Kevin\");\n\nlet operator = \"Unknown\";\nif (operators.has(operatorNumber)){\n    operator = operators.get(operatorNumber);\n}\n\nflow.set(\"operatorName\", operator);\nmsg.payload = `${operatorNumber} - ${operator}`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 790,
+        "y": 200,
+        "wires": [
+            [
+                "224217a2a7316036",
+                "d2d34c2b524c3171"
+            ]
+        ]
+    },
+    {
+        "id": "43d244d23afbf637",
+        "type": "ui_template",
+        "z": "1ead5f0b5e14aad5",
+        "group": "c23aad146e3d1163",
+        "name": "",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "format": "<style>\n.popup-dialog {\n    min-width: 350px;\n    height: 150px;\n}\n</style>\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "global",
+        "className": "",
+        "x": 560,
+        "y": 40,
+        "wires": [
+            []
         ]
     }
 ]
