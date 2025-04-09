@@ -1297,5 +1297,41 @@
         "wires": [
             []
         ]
+    },
+    {
+        "id": "f7480990dc935d30",
+        "type": "ui_text_input",
+        "z": "1ead5f0b5e14aad5",
+        "name": "",
+        "label": "Traveler Number",
+        "tooltip": "",
+        "group": "c23aad146e3d1163",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "number",
+        "delay": "0",
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 430,
+        "y": 280,
+        "wires": [
+            [
+                "d2d34c2b524c3171"
+            ]
+        ]
+    },
+    {
+        "id": "c47bb854bdbf0a79",
+        "type": "comment",
+        "z": "1ead5f0b5e14aad5",
+        "name": "",
+        "info": "Future: Once we have traveler and operator, store all values together in a database.",
+        "x": 740,
+        "y": 300,
+        "wires": []
     }
 ]
